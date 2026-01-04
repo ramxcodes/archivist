@@ -12,7 +12,7 @@ export default function Footer() {
         <div className="flex flex-col items-center gap-4">
           {/* Main footer text */}
           <p className="text-gray-600 text-[9px] md:text-[10px] uppercase font-bold tracking-[0.3em] md:tracking-[0.4em] text-center">
-            Mood Tracking System &copy; {year} &bull; Designed for Reflection
+            Archivist &copy; {year}
           </p>
 
           {/* Built by section */}

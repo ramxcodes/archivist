@@ -13,15 +13,15 @@ export const MoodLegend: React.FC = () => {
   ];
 
   return (
-    <div className="flex flex-col gap-4 p-6 bg-[#16161A] border border-[#2A2B2F] rounded-xl sticky top-6 shadow-xl h-fit w-full lg:w-56">
+    <div className="flex flex-col gap-4 p-4 bg-[#16161A] border border-[#2A2B2F] rounded-xl sticky top-6 shadow-xl h-fit w-full lg:w-56">
       <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-widest mb-2">
         Legend
       </h3>
       <div className="flex flex-col gap-3">
         {legends.map((type) => (
-          <div key={type} className="flex items-center gap-3 group">
+          <div key={type} className="flex items-center gap-3">
             <div
-              className="w-5 h-5 rounded-md shadow-sm transition-transform group-hover:scale-110"
+              className="w-5 h-5 rounded-md shadow-sm transition-transform"
               style={{ backgroundColor: LEGEND_CONFIG[type].color }}
             />
             <span className="text-sm font-medium text-gray-300 whitespace-nowrap">
@@ -29,11 +29,6 @@ export const MoodLegend: React.FC = () => {
             </span>
           </div>
         ))}
-      </div>
-      <div className="mt-4 pt-4 border-t border-[#2A2B2F]">
-        <p className="text-xs text-gray-500 leading-relaxed italic">
-          Each tile represents a single day of your journey.
-        </p>
       </div>
     </div>
   );
