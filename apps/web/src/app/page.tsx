@@ -26,16 +26,13 @@ export default function Home() {
   const { data: session, isPending: isSessionLoading } =
     authClient.useSession();
 
-  // Fetch data
   const { data: yearData, isLoading: isLoadingYear } = useYearEntries();
   const { data: customCategoriesData } = useCustomCategories();
   const { data: dayData } = useDayEntry(selectedDay?.dateKey || null);
 
-  // Mutations
   const saveDayEntry = useSaveDayEntry();
   const createReview = useCreateReview();
 
-  // Convert entries array to map
   const dayEntries: DayEntryMap = useMemo(() => {
     if (!yearData?.entries) return {};
     const map: DayEntryMap = {};
@@ -45,7 +42,6 @@ export default function Home() {
     return map;
   }, [yearData]);
 
-  // Group reviews by entry ID
   const reviewsByEntry: Record<string, Review[]> = useMemo(() => {
     if (!yearData?.reviews) return {};
     const map: Record<string, Review[]> = {};
@@ -58,12 +54,47 @@ export default function Home() {
     return map;
   }, [yearData]);
 
-  // Calculate stats
   const totalEntries = yearData?.entries?.length || 0;
   const goodDaysCount =
     yearData?.entries?.filter(
       (e) => e.legend === Legend.GOOD_DAY || e.legend === Legend.CORE_MEMORY
     ).length || 0;
+
+  const currentStreak = useMemo(() => {
+    if (!yearData?.entries || yearData.entries.length === 0) return 0;
+    const entryDates = new Set(yearData.entries.map((entry) => entry.date));
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const formatDate = (date: Date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    };
+
+    let checkDate = new Date(today);
+    const todayStr = formatDate(today);
+
+    if (!entryDates.has(todayStr)) {
+      checkDate.setDate(checkDate.getDate() - 1);
+    }
+
+    let streak = 0;
+    const maxDaysToCheck = 365;
+
+    for (let i = 0; i < maxDaysToCheck; i++) {
+      const dateStr = formatDate(checkDate);
+
+      if (entryDates.has(dateStr)) {
+        streak++;
+        checkDate.setDate(checkDate.getDate() - 1);
+      } else {
+        break;
+      }
+    }
+
+    return streak;
+  }, [yearData]);
 
   const handleDayClick = (day: DayInfo) => {
     if (!session) {
@@ -158,6 +189,14 @@ export default function Home() {
                   Great Days
                 </span>
               </div>
+              <div className="bg-[#16161A] border border-[#2A2B2F] rounded-xl p-3 md:p-4 flex flex-col items-center min-w-[90px] md:min-w-[100px] shadow-sm">
+                <span className="text-xl md:text-2xl font-black text-[#F59E0B]">
+                  {currentStreak}
+                </span>
+                <span className="text-[9px] md:text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+                  Day Streak
+                </span>
+              </div>
             </div>
           )}
         </header>
@@ -215,13 +254,6 @@ export default function Home() {
             onSave={handleSaveDayEntry}
           />
         )}
-
-        {/* Footer Info */}
-        <footer className="mt-20 md:mt-32 py-8 border-t border-[#2A2B2F] text-center">
-          <p className="text-gray-600 text-[9px] md:text-[10px] uppercase font-bold tracking-[0.3em] md:tracking-[0.4em]">
-            Mood Tracking System &copy; {year} &bull; Designed for Reflection
-          </p>
-        </footer>
       </div>
 
       {/* Sign In Dialog */}

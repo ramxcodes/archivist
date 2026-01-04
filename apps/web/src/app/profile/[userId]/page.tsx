@@ -145,13 +145,6 @@ export default function PublicProfilePage() {
           </aside>
         )}
       </div>
-
-      {/* Footer Info */}
-      <footer className="mt-20 md:mt-32 py-8 border-t border-[#2A2B2F] text-center">
-        <p className="text-gray-600 text-[9px] md:text-[10px] uppercase font-bold tracking-[0.3em] md:tracking-[0.4em]">
-          Mood Tracking System &copy; {year} &bull; Public Profile
-        </p>
-      </footer>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 
 import "../index.css";
 import Header from "@/components/core/header";
+import Footer from "@/components/core/footer";
 import Providers from "@/components/core/providers";
 
 const inter = Inter({
@@ -12,8 +13,8 @@ const inter = Inter({
   weight: ["400", "500", "600", "700"],
 });
 export const metadata: Metadata = {
-  title: "boilerplate",
-  description: "boilerplate",
+  title: "Archivist",
+  description: "Archivist - A personal journal for your life",
 };
 
 export default function RootLayout({
@@ -24,11 +25,12 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <body
-        className={`${inter.className} antialiased bg-[#0D0D0F] text-gray-100 min-h-screen`}
+        className={`${inter.className} antialiased bg-[#0D0D0F] text-gray-100 min-h-screen flex flex-col`}
       >
         <Providers>
           <Header />
-          {children}
+          <main className="flex-1">{children}</main>
+          <Footer />
         </Providers>
       </body>
     </html>

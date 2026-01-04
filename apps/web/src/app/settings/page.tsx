@@ -394,13 +394,6 @@ export default function SettingsPage() {
         </Card>
       </div>
 
-      {/* Footer */}
-      <footer className="mt-20 md:mt-32 py-8 border-t border-[#2A2B2F] text-center">
-        <p className="text-gray-600 text-[9px] md:text-[10px] uppercase font-bold tracking-[0.3em] md:tracking-[0.4em]">
-          Mood Tracking System &copy; 2026 &bull; Designed for Reflection
-        </p>
-      </footer>
-
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent className="bg-[#16161A] border-[#2A2B2F]">

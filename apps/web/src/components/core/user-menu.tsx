@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Gear, User } from "@phosphor-icons/react/dist/ssr";
+import { GearIcon, HouseIcon, UserIcon } from "@phosphor-icons/react/dist/ssr";
 
 import {
   DropdownMenu,
@@ -44,19 +44,16 @@ export default function UserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger render={<Button variant="outline" />}>
-        {session.user.name}
+        <UserIcon className="h-4 w-4" />
+        <span>{session.user.name}</span>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="bg-card w-fit">
+      <DropdownMenuContent className="bg-card w-fit mt-1" align="end">
         <DropdownMenuGroup>
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem className="text-xs text-muted-foreground">
-            {session.user.email}
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => router.push("/settings")}>
-            <Gear className="mr-2 h-4 w-4" />
-            <span>Settings</span>
+          <DropdownMenuItem onClick={() => router.push("/")}>
+            <HouseIcon className="mr-2 h-4 w-4" />
+            <span>Home</span>
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => {
@@ -65,8 +62,12 @@ export default function UserMenu() {
               router.push(`/profile/${profileSlug}`);
             }}
           >
-            <User className="mr-2 h-4 w-4" />
+            <UserIcon className="mr-2 h-4 w-4" />
             <span>Public Profile</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push("/settings")}>
+            <GearIcon className="mr-2 h-4 w-4" />
+            <span>Settings</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
