@@ -14,7 +14,7 @@ export default function Home() {
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
       </p>
       <Button variant={"secondary"}>
-        <Link href="/dashboard">Visit Dashboard</Link>
+        <Link href="/calendar">Visit Calendar</Link>
       </Button>
 
       <Separator className="my-4" />

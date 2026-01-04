@@ -33,7 +33,7 @@ export default function SignUpForm({
         },
         {
           onSuccess: () => {
-            router.push("/dashboard");
+            router.push("/calendar");
             toast.success("Sign up successful");
           },
           onError: (error) => {
@@ -54,7 +54,7 @@ export default function SignUpForm({
   const handleGoogleSignUp = async () => {
     await authClient.signIn.social({
       provider: "google",
-      callbackURL: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/dashboard`,
+      callbackURL: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/calendar`,
     });
   };
 

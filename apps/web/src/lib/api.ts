@@ -1,13 +1,7 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { env } from "@quarter/env/web";
-import type { User } from "@quarter/db";
 
 const API_URL = env.NEXT_PUBLIC_SERVER_URL;
-
-export type UpdateUserNameResponse = {
-  message: string;
-  user: User;
-};
 
 // API endpoints
 
@@ -19,41 +13,13 @@ const getApiHealth = async (): Promise<{ message: string }> => {
   return response.json();
 };
 
-async function updateUserNameRequest(
-  name: string
-): Promise<UpdateUserNameResponse> {
-  const response = await fetch(`${API_URL}/api/users/update-name`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({ name }),
-  });
-
-  if (!response.ok) {
-    const error = await response
-      .json()
-      .catch(() => ({ message: "An error occurred" }));
-    throw new Error(error.message || "Failed to update name");
-  }
-
-  return response.json();
-}
-
 /**
- * Mutation hooks
+ * Query hooks
  */
 
 export function useGetApiHealth() {
   return useQuery({
     queryKey: ["api-health"],
     queryFn: getApiHealth,
-  });
-}
-
-export function useUpdateUserName() {
-  return useMutation({
-    mutationFn: updateUserNameRequest,
   });
 }
