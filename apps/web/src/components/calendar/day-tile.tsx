@@ -12,7 +12,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@repo/ui/components/ui/popover";
-import { isFutureDate } from "@/lib/date-utils";
 import { toast } from "sonner";
 
 interface DayTileProps {
@@ -20,7 +19,8 @@ interface DayTileProps {
   entry?: DayEntry;
   reviews?: Review[];
   onClick: (day: DayInfo) => void;
-  showReviews?: boolean; // For public profile
+  showReviews?: boolean;
+  isToday?: boolean;
 }
 
 export const DayTile: React.FC<DayTileProps> = ({
@@ -29,6 +29,7 @@ export const DayTile: React.FC<DayTileProps> = ({
   reviews = [],
   onClick,
   showReviews = true,
+  isToday = false,
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -41,10 +42,11 @@ export const DayTile: React.FC<DayTileProps> = ({
   const legend = entry?.legend;
   const config = legend ? LEGEND_CONFIG[legend] : null;
   const isDefault = !legend;
-  const isFuture = isFutureDate(day.dateKey);
 
-  // Determine tooltip content
-  const hasReviews = reviews && reviews.length > 0;
+  const todayKey = new Date().toISOString().split("T")[0];
+  const isFuture = day.dateKey > todayKey;
+
+  const hasReviews = reviews.length > 0;
   const shouldShowReviews = showReviews && hasReviews;
 
   const handleClick = (e: React.MouseEvent) => {
@@ -52,8 +54,8 @@ export const DayTile: React.FC<DayTileProps> = ({
     setOpen(false);
 
     if (isFuture) {
-      toast.error("Cannot create entries for future dates", {
-        description: "You can only log entries for today or past dates.",
+      toast.error("Future dates are locked", {
+        description: "Entries can only be added for today or past days.",
       });
       return;
     }
@@ -65,23 +67,35 @@ export const DayTile: React.FC<DayTileProps> = ({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
         onClick={handleClick}
-        onMouseEnter={() => setOpen(true)}
+        onMouseEnter={() => !isFuture && setOpen(true)}
         onMouseLeave={() => setOpen(false)}
+        disabled={isFuture}
         className={`
           w-7 h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 rounded-md flex items-center justify-center shrink-0
-          transition-all duration-200 transform hover:scale-110 relative
-          shadow-sm border border-transparent
+          transition-all duration-200 relative
+          border
+          ${
+            isFuture
+              ? "opacity-40 cursor-not-allowed"
+              : "hover:scale-110"
+          }
+          ${
+            isToday
+              ? "border-indigo-400 shadow-[0_0_0_2px_rgba(99,102,241,0.4)]"
+              : "border-transparent"
+          }
           ${isDefault ? "hover:bg-[#3F3F46]" : "hover:brightness-125"}
         `}
         style={{
           backgroundColor: config ? config.color : DEFAULT_COLOR,
-          boxShadow: !isDefault ? `0 0 10px ${config?.color}44` : "none",
+          boxShadow:
+            !isDefault && !isToday
+              ? `0 0 10px ${config?.color}44`
+              : undefined,
         }}
       >
         <span
-          className={`text-[9px] md:text-[10px] lg:text-xs font-bold transition-colors ${
-            !isDefault ? "opacity-90" : "text-gray-500"
-          }`}
+          className="text-[9px] md:text-[10px] lg:text-xs font-bold"
           style={{
             color: !isDefault && config ? config.textColor : DEFAULT_TEXT_COLOR,
           }}
@@ -89,66 +103,71 @@ export const DayTile: React.FC<DayTileProps> = ({
           {day.dayNumber.toString().padStart(2, "0")}
         </span>
       </PopoverTrigger>
-      <PopoverContent
-        className="bg-[#1A1A1E] text-white text-xs rounded-lg border border-[#3F3F46] shadow-2xl w-80 p-0 h-fit"
-        side="top"
-        align="center"
-        sideOffset={8}
-        onMouseEnter={() => setOpen(true)}
-        onMouseLeave={() => setOpen(false)}
-      >
-        {/* Date Header */}
-        <div className="px-3 py-2 border-b border-[#3F3F46]">
-          <p className="font-bold text-[10px] text-gray-400">
-            {new Date(day.dateKey).toLocaleDateString("en-US", {
-              weekday: "short",
-              month: "short",
-              day: "numeric",
-            })}
-          </p>
-        </div>
 
-        {/* Mood (if exists) */}
-        {config && (
+      {!isFuture && (
+        <PopoverContent
+          className="bg-[#1A1A1E] text-white text-xs rounded-lg border border-[#3F3F46] shadow-2xl w-80 p-0"
+          side="top"
+          align="center"
+          sideOffset={8}
+          onMouseEnter={() => setOpen(true)}
+          onMouseLeave={() => setOpen(false)}
+        >
           <div className="px-3 py-2 border-b border-[#3F3F46]">
-            <div className="flex items-center gap-2">
-              <div
-                className="w-3 h-3 rounded shrink-0"
-                style={{ backgroundColor: config.color }}
-              />
-              <p className="font-semibold text-xs text-gray-200">
-                {config.label}
-              </p>
-            </div>
+            <p className="font-bold text-[10px] text-gray-400">
+              {new Date(day.dateKey).toLocaleDateString("en-US", {
+                weekday: "short",
+                month: "short",
+                day: "numeric",
+              })}
+              {isToday && (
+                <span className="ml-2 text-indigo-400 font-semibold">
+                  Today
+                </span>
+              )}
+            </p>
           </div>
-        )}
 
-        {/* Reviews (if exists and should show) */}
-        {shouldShowReviews && (
-          <div className="px-3 py-2 space-y-2 max-h-fit overflow-y-auto">
-            {reviews.map((review, idx) => (
-              <div key={idx} className="space-y-1">
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-                  {review.category === "CUSTOM"
-                    ? "Custom"
-                    : review.category.charAt(0) +
-                      review.category.slice(1).toLowerCase()}
-                </p>
-                <p className="text-[11px] text-gray-300 leading-relaxed">
-                  {review.content}
+          {config && (
+            <div className="px-3 py-2 border-b border-[#3F3F46]">
+              <div className="flex items-center gap-2">
+                <div
+                  className="w-3 h-3 rounded"
+                  style={{ backgroundColor: config.color }}
+                />
+                <p className="font-semibold text-xs text-gray-200">
+                  {config.label}
                 </p>
               </div>
-            ))}
-          </div>
-        )}
+            </div>
+          )}
 
-        {/* No entry message */}
-        {!config && (
-          <div className="px-3 py-2">
-            <p className="text-[10px] text-gray-500 italic">No entry yet</p>
-          </div>
-        )}
-      </PopoverContent>
+          {shouldShowReviews && (
+            <div className="px-3 py-2 space-y-2">
+              {reviews.map((review, idx) => (
+                <div key={idx} className="space-y-1">
+                  <p className="text-[10px] font-bold text-gray-400 uppercase">
+                    {review.category === "CUSTOM"
+                      ? "Custom"
+                      : review.category.toLowerCase()}
+                  </p>
+                  <p className="text-[11px] text-gray-300">
+                    {review.content}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {!config && (
+            <div className="px-3 py-2">
+              <p className="text-[10px] text-gray-500 italic">
+                No entry yet
+              </p>
+            </div>
+          )}
+        </PopoverContent>
+      )}
     </Popover>
   );
 };

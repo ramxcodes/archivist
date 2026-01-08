@@ -27,6 +27,8 @@ export const MonthGrid: React.FC<MonthGridProps> = ({
 }) => {
   const grid = getMonthGrid(year, monthIndex);
 
+  const todayKey = new Date().toISOString().split("T")[0];
+
   return (
     <div className="flex flex-col gap-3 w-full max-w-full">
       <div className="flex items-center justify-between mb-1">
@@ -36,12 +38,11 @@ export const MonthGrid: React.FC<MonthGridProps> = ({
       </div>
 
       <div className="flex gap-2 w-full">
-        {/* Weekday labels - only show for first month of quarter */}
         {showWeekdays && (
           <div className="flex flex-col gap-[8px] md:gap-[10px] lg:gap-[12px] pt-1 shrink-0">
             {WEEKDAYS.map((day) => (
               <div key={day} className="h-7 md:h-8 lg:h-10 flex items-center">
-                <span className="text-[8px] md:text-[9px] font-bold text-gray-600 tracking-tighter">
+                <span className="text-[8px] md:text-[9px] font-bold text-gray-600">
                   {day}
                 </span>
               </div>
@@ -49,7 +50,6 @@ export const MonthGrid: React.FC<MonthGridProps> = ({
           </div>
         )}
 
-        {/* The Grid */}
         <div className="flex flex-col gap-[6px] md:gap-[8px] lg:gap-[10px] flex-1 min-w-0">
           {grid.map((row, rowIndex) => (
             <div
@@ -59,6 +59,8 @@ export const MonthGrid: React.FC<MonthGridProps> = ({
               {row.map((day, colIndex) => {
                 const entry = day ? dayEntries[day.dateKey] : undefined;
                 const reviews = entry ? reviewsByEntry[entry.id] || [] : [];
+                const isToday = day?.dateKey === todayKey;
+
                 return (
                   <DayTile
                     key={`${rowIndex}-${colIndex}`}
@@ -67,6 +69,7 @@ export const MonthGrid: React.FC<MonthGridProps> = ({
                     reviews={reviews}
                     onClick={onTileClick}
                     showReviews={showReviews}
+                    isToday={isToday}
                   />
                 );
               })}
