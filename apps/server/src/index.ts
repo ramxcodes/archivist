@@ -7,6 +7,7 @@ import daysRoutes from "./api/routes/days.routes";
 import reviewsRoutes from "./api/routes/reviews.routes";
 import categoriesRoutes from "./api/routes/categories.routes";
 import profileRoutes from "./api/routes/profile.routes";
+import { rateLimiter } from './middleware/rate-limit';
 
 const app = express();
 
@@ -18,7 +19,7 @@ app.use(
     credentials: true,
   })
 );
-
+app.use(rateLimiter);
 app.all("/api/auth{/*path}", toNodeHandler(auth));
 
 app.use(express.json());
