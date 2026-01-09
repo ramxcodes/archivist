@@ -15,6 +15,7 @@ Archivist is a platform where you can make daily journal entries with custom cat
 - **Express** - Fast, unopinionated web framework
 - **Bun** - Runtime environment
 - **Drizzle** - TypeScript-first ORM
+- **Redis** - For caching and rate limiting
 - **PostgreSQL** - Database engine
 - **Authentication** - Better-Auth
 - **Turborepo** - Optimized monorepo build system
@@ -39,6 +40,14 @@ This project uses PostgreSQL with Drizzle ORM.
 ```bash
 bun run db:push
 ```
+### Redis Setup
+
+This project requires Redis for rate limiting.
+
+1. Start a Redis instance (using Docker is recommended):
+   ```bash
+   docker run -d -p 6379:6379 --name archivist-redis redis
+   ```
 
 Then, run the development server:
 

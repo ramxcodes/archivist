@@ -34,10 +34,10 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "turbo": "^2.6.3",
-    "typescript": "catalog:",
+    "@archivist/config": "workspace:*",
     "@types/bun": "catalog:",
-    "@archivist/config": "workspace:*"
+    "turbo": "^2.6.3",
+    "typescript": "catalog:"
   },
   "packageManager": "bun@1.3.4"
 }
