@@ -146,6 +146,70 @@ export const DayModal: React.FC<DayModalProps> = ({
     });
   };
 
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (!day) return;
+
+    if (step === 1 && ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Enter"].includes(e.key)) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    if (e.key === "Escape") {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    if (step === 2 && (e.target as HTMLElement)?.tagName === 'TEXTAREA') {
+      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+        e.preventDefault();
+        handleSave();
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        handleBack();
+      }
+      return;
+    }
+
+    if (step === 1) {
+      if (e.key === "Enter" && !isFuture) {
+        handleNext();
+        return;
+      }
+
+      if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.key)) {
+        const currentIndex = legends.indexOf(selectedLegend);
+
+        if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+          const prevIndex = (currentIndex - 1 + legends.length) % legends.length;
+          setSelectedLegend(legends[prevIndex]);
+        }
+        if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+          const nextIndex = (currentIndex + 1) % legends.length;
+          setSelectedLegend(legends[nextIndex]);
+        }
+        return;
+      }
+
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+    }
+
+    if (step === 2) {
+      if ((e.ctrlKey || e.metaKey) && e.key === "Enter" && !isFuture) {
+        e.preventDefault();
+        handleSave();
+        return;
+      }
+
+      if (e.key === "Escape") {
+        handleBack();
+        return;
+      }
+    }
+  };
+
   const handleSkipReviews = () => {
     onSave({
       date: day.dateKey,
@@ -153,6 +217,16 @@ export const DayModal: React.FC<DayModalProps> = ({
       reviews: [],
     });
   };
+
+  useEffect(() => {
+    if (!day) return;
+
+    document.addEventListener('keydown', handleKeyDown, true);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown, true);
+    };
+  }, [step, day, handleNext, handleSave, handleBack, onClose, selectedLegend, legends, isFuture, handleKeyDown]);
 
   return (
     <Dialog open={!!day} onOpenChange={onClose}>
