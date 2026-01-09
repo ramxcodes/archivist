@@ -35,7 +35,7 @@ export const DayTile: React.FC<DayTileProps> = ({
 
   if (!day) {
     return (
-      <div className="w-7 h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 invisible shrink-0" />
+      <div className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 invisible shrink-0" />
     );
   }
 
@@ -71,7 +71,7 @@ export const DayTile: React.FC<DayTileProps> = ({
         onMouseLeave={() => setOpen(false)}
         disabled={isFuture}
         className={`
-          w-7 h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 rounded-md flex items-center justify-center shrink-0
+          w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 rounded-md flex items-center justify-center shrink-0
           transition-all duration-200 relative
           border
           ${
@@ -95,7 +95,7 @@ export const DayTile: React.FC<DayTileProps> = ({
         }}
       >
         <span
-          className="text-[9px] md:text-[10px] lg:text-xs font-bold"
+          className="text-[8px] sm:text-[9px] md:text-[10px] lg:text-xs font-bold"
           style={{
             color: !isDefault && config ? config.textColor : DEFAULT_TEXT_COLOR,
           }}

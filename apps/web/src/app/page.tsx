@@ -202,25 +202,25 @@ export default function Home() {
         </header>
 
         {/* Main Layout Grid */}
-        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-8 lg:gap-12">
           {/* Year View */}
-          <div className="flex-1 space-y-10 md:space-y-12 lg:space-y-16 min-w-0">
+          <div className="flex-1 space-y-6 sm:space-y-10 md:space-y-12 lg:space-y-16 min-w-0 px-2 sm:px-0">
             {QUADRIMESTERS.map((quad, qIndex) => (
               <section
                 key={quad.name}
                 className="animate-in slide-in-from-bottom-4 duration-500"
                 style={{ animationDelay: `${qIndex * 150}ms` }}
               >
-                <div className="flex items-center gap-4 mb-5 md:mb-6">
-                  <h2 className="text-xs md:text-sm font-black text-[#22D3EE] uppercase tracking-[0.2em] md:tracking-[0.3em] whitespace-nowrap">
+                <div className="flex items-center gap-2 sm:gap-4 mb-3 sm:mb-5 md:mb-6 justify-center sm:justify-start">
+                  <h2 className="text-xs sm:text-xs md:text-sm font-black text-[#22D3EE] uppercase tracking-[0.15em] sm:tracking-[0.2em] md:tracking-[0.3em] whitespace-nowrap">
                     {quad.name}
                   </h2>
-                  <div className="h-px bg-linear-to-r from-[#22D3EE]/30 to-transparent w-full" />
+                  <div className="h-px bg-linear-to-r from-[#22D3EE]/30 to-transparent w-full hidden sm:block" />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-6 md:gap-y-8 gap-x-3 md:gap-x-4 lg:gap-x-6 justify-items-center lg:justify-items-start min-w-0">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-y-4 sm:gap-y-6 md:gap-y-8 gap-x-2 sm:gap-x-3 md:gap-x-4 lg:gap-x-6 justify-items-center lg:justify-items-start min-w-0">
                   {quad.months.map((mIdx, idx) => (
-                    <div key={mIdx} className="w-full max-w-sm md:max-w-none min-w-0">
+                    <div key={mIdx} className="w-full max-w-xs sm:max-w-sm md:max-w-none min-w-0">
                       <MonthGrid
                         year={year}
                         monthIndex={mIdx}
