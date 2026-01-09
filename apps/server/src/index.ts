@@ -3,10 +3,20 @@ import { env } from "@archivist/env/server";
 import { toNodeHandler } from "better-auth/node";
 import cors from "cors";
 import express from "express";
+import { getRedisClient } from "./lib/redis";
+import { rateLimit } from "./api/middleware/rate-limit.middleware";
 import daysRoutes from "./api/routes/days.routes";
 import reviewsRoutes from "./api/routes/reviews.routes";
 import categoriesRoutes from "./api/routes/categories.routes";
 import profileRoutes from "./api/routes/profile.routes";
+
+// Initialize Redis client early to fail fast if REDIS_DATABASE_URL is missing
+try {
+  getRedisClient();
+} catch (error) {
+  console.error("Failed to initialize Redis:", error);
+  process.exit(1);
+}
 
 const app = express();
 
@@ -22,6 +32,9 @@ app.use(
 app.all("/api/auth{/*path}", toNodeHandler(auth));
 
 app.use(express.json());
+
+// Apply global rate limiting middleware
+app.use(rateLimit);
 
 // Routes
 app.use("/api/days", daysRoutes);
@@ -40,6 +53,10 @@ app.listen(3009, () => {
     DATABASE_URL: env.DATABASE_URL
       ? env.DATABASE_URL.substring(0, 3) + "..."
       : "❌ undefined",
+    REDIS_DATABASE_URL: env.REDIS_DATABASE_URL
+      ? env.REDIS_DATABASE_URL.substring(0, 3) + "..."
+      : "❌ undefined",
+    RATE_LIMIT: env.RATE_LIMIT ?? "❌ undefined",
     BETTER_AUTH_SECRET: env.BETTER_AUTH_SECRET
       ? env.BETTER_AUTH_SECRET.substring(0, 3) + "..."
       : "❌ undefined",

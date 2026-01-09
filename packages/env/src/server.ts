@@ -13,6 +13,13 @@ export const env = createEnv({
       .default("development"),
     GOOGLE_CLIENT_ID: z.string().min(1),
     GOOGLE_CLIENT_SECRET: z.string().min(1),
+    REDIS_DATABASE_URL: z.string().min(1),
+    RATE_LIMIT: z
+      .string()
+      .regex(/^\d+$/)
+      .transform((val) => parseInt(val, 10))
+      .pipe(z.number().int().positive())
+      .default("50"),
   },
   runtimeEnv: process.env,
   emptyStringAsUndefined: true,
