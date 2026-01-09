@@ -3,6 +3,7 @@ import { env } from "@archivist/env/server";
 import { toNodeHandler } from "better-auth/node";
 import cors from "cors";
 import express from "express";
+import { rateLimiter } from "./api/middleware/rate-limiter.middleware";
 import daysRoutes from "./api/routes/days.routes";
 import reviewsRoutes from "./api/routes/reviews.routes";
 import categoriesRoutes from "./api/routes/categories.routes";
@@ -22,6 +23,7 @@ app.use(
 app.all("/api/auth{/*path}", toNodeHandler(auth));
 
 app.use(express.json());
+app.use(rateLimiter);
 
 // Routes
 app.use("/api/days", daysRoutes);
@@ -40,6 +42,10 @@ app.listen(3009, () => {
     DATABASE_URL: env.DATABASE_URL
       ? env.DATABASE_URL.substring(0, 3) + "..."
       : "❌ undefined",
+    REDIS_DATABASE_URL: env.REDIS_DATABASE_URL
+      ? env.REDIS_DATABASE_URL.substring(0, 3) + "..."
+      : "❌ undefined",
+    RATE_LIMIT: env.RATE_LIMIT,
     BETTER_AUTH_SECRET: env.BETTER_AUTH_SECRET
       ? env.BETTER_AUTH_SECRET.substring(0, 3) + "..."
       : "❌ undefined",
