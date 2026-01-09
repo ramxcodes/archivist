@@ -19,40 +19,84 @@ Archivist is a platform where you can make daily journal entries with custom cat
 - **Authentication** - Better-Auth
 - **Turborepo** - Optimized monorepo build system
 
-## Getting Started
+## Installation & Setup
 
-First, install the dependencies:
+Follow these steps to get the project running on your local machine.
+
+### Prerequisites
+
+- [Bun](https://bun.sh/) (latest version)
+- [PostgreSQL](https://www.postgresql.org/) database
+
+### 1. Install Dependencies
+
+Install the project dependencies using Bun:
 
 ```bash
 bun install
 ```
 
-## Database Setup
+### 2. Environment Configuration
 
-This project uses PostgreSQL with Drizzle ORM.
+#### Backend (Server)
+1. Copy the example environment file:
+   ```bash
+   cp apps/server/.env.example apps/server/.env
+   ```
+2. Update `apps/server/.env` with your configuration:
+   - `DATABASE_URL`: Connection string for your PostgreSQL database.
+   - `BETTER_AUTH_SECRET`: A secure random string for authentication.
+   - `BETTER_AUTH_URL`: `http://localhost:3003` (Frontend URL).
+   - `CORS_ORIGIN`: `http://localhost:3003` (Frontend URL).
+   - `GOOGLE_CLIENT_ID`: Google OAuth client ID.
+   - `GOOGLE_CLIENT_SECRET`: Google OAuth client secret.
 
-1. Make sure you have a PostgreSQL database set up.
-2. Update your `apps/server/.env` file with your PostgreSQL connection details.
+   > **Note:** You can get the `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` from the [Google Cloud Console](https://console.cloud.google.com/).
+   >
+   > **Google OAuth Configuration:**
+   > - **Authorized JavaScript origins:** `http://localhost:3003`
+   > - **Authorized redirect URIs:** `http://localhost:3009/api/auth/callback/google`
+   >
+   > For more details, see the [Better Auth Installation Guide](https://www.better-auth.com/docs/installation).
 
-3. Apply the schema to your database:
+
+#### Frontend (Web)
+1. Copy the example environment file:
+   ```bash
+   cp apps/web/.env.example apps/web/.env
+   ```
+2. Update `apps/web/.env`:
+   - `NEXT_PUBLIC_SERVER_URL`: `http://localhost:3009` (Backend API URL).
+   - `NEXT_PUBLIC_FRONTEND_URL`: `http://localhost:3003`.
+
+### 3. Database Setup
+
+Once your `.env` is configured and your Postgres database is running, push the schema:
 
 ```bash
 bun run db:push
 ```
 
-Then, run the development server:
+You can also open the database studio to view your tables:
+```bash
+bun run db:studio
+```
+
+### 4. Run the Application
+
+Start both the frontend and backend in development mode:
 
 ```bash
 bun run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to see the web application.
-The API is running at [http://localhost:3001](http://localhost:3001).
+- **Frontend**: [http://localhost:3003](http://localhost:3003)
+- **Backend**: [http://localhost:3009](http://localhost:3009)
 
 ## Project Structure
 
 ```
-boilerplate/
+archivist/
 ├── apps/
 │   ├── web/         # Frontend application (Next.js)
 │   └── server/      # Backend API (Express)
@@ -82,7 +126,7 @@ We use a feature branch workflow for contributions. Please follow these steps:
 2. Clone your fork locally:
    ```bash
    git clone https://github.com/ramxcodes/archivist.git
-   cd boilerplate
+   cd archivist
    ```
 
 ### 2. Set Up Development Environment
