@@ -204,7 +204,7 @@ export default function Home() {
         {/* Main Layout Grid */}
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
           {/* Year View */}
-          <div className="flex-1 space-y-10 md:space-y-12 lg:space-y-16 overflow-hidden">
+          <div className="flex-1 space-y-10 md:space-y-12 lg:space-y-16 min-w-0">
             {QUADRIMESTERS.map((quad, qIndex) => (
               <section
                 key={quad.name}
@@ -218,9 +218,9 @@ export default function Home() {
                   <div className="h-px bg-linear-to-r from-[#22D3EE]/30 to-transparent w-full" />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-6 md:gap-y-8 gap-x-3 md:gap-x-4 lg:gap-x-6 justify-items-center lg:justify-items-start">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-6 md:gap-y-8 gap-x-3 md:gap-x-4 lg:gap-x-6 justify-items-center lg:justify-items-start min-w-0">
                   {quad.months.map((mIdx, idx) => (
-                    <div key={mIdx} className="w-full max-w-sm md:max-w-none">
+                    <div key={mIdx} className="w-full max-w-sm md:max-w-none min-w-0">
                       <MonthGrid
                         year={year}
                         monthIndex={mIdx}

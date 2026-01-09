@@ -30,14 +30,14 @@ export const MonthGrid: React.FC<MonthGridProps> = ({
   const todayKey = new Date().toISOString().split("T")[0];
 
   return (
-    <div className="flex flex-col gap-3 w-full max-w-full">
+    <div className="flex flex-col gap-3 w-full max-w-full min-w-0">
       <div className="flex items-center justify-between mb-1">
         <h4 className="text-[10px] md:text-[11px] font-bold text-gray-400 tracking-[0.15em] md:tracking-[0.2em] uppercase">
           {MONTHS[monthIndex]} {year}
         </h4>
       </div>
 
-      <div className="flex gap-2 w-full">
+      <div className="flex gap-2 w-full min-w-0">
         {showWeekdays && (
           <div className="flex flex-col gap-[8px] md:gap-[10px] lg:gap-[12px] pt-1 shrink-0">
             {WEEKDAYS.map((day) => (
@@ -50,7 +50,7 @@ export const MonthGrid: React.FC<MonthGridProps> = ({
           </div>
         )}
 
-        <div className="flex flex-col gap-[6px] md:gap-[8px] lg:gap-[10px] flex-1 min-w-0">
+        <div className="flex flex-col gap-[6px] md:gap-[8px] lg:gap-[10px] flex-1 min-w-0 overflow-visible">
           {grid.map((row, rowIndex) => (
             <div
               key={rowIndex}
