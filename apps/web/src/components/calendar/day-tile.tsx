@@ -32,6 +32,14 @@ export const DayTile: React.FC<DayTileProps> = ({
   isToday = false,
 }) => {
   const [open, setOpen] = useState(false);
+  // Fix: Check if device supports proper hover (excludes touch-only devices but allows touchscreen laptops)
+  const [hasHoverCapability, setHasHoverCapability] = useState(true);
+
+  // Fix: Detect hover capability using media query to prevent modal on touch-only devices
+  React.useEffect(() => {
+    const mediaQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
+    setHasHoverCapability(mediaQuery.matches);
+  }, []);
 
   if (!day) {
     return (
@@ -67,8 +75,8 @@ export const DayTile: React.FC<DayTileProps> = ({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
         onClick={handleClick}
-        onMouseEnter={() => !isFuture && setOpen(true)}
-        onMouseLeave={() => setOpen(false)}
+        onMouseEnter={() => !isFuture && hasHoverCapability && setOpen(true)} // Fix: Only enable hover on devices with mouse/trackpad
+        onMouseLeave={() => hasHoverCapability && setOpen(false)} // Fix: Only enable hover on devices with mouse/trackpad
         disabled={isFuture}
         className={`
           w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 rounded-md flex items-center justify-center shrink-0
@@ -110,8 +118,8 @@ export const DayTile: React.FC<DayTileProps> = ({
           side="top"
           align="center"
           sideOffset={8}
-          onMouseEnter={() => setOpen(true)}
-          onMouseLeave={() => setOpen(false)}
+          onMouseEnter={() => hasHoverCapability && setOpen(true)} // Fix: Only enable hover on devices with mouse/trackpad
+          onMouseLeave={() => hasHoverCapability && setOpen(false)} // Fix: Only enable hover on devices with mouse/trackpad
         >
           <div className="px-3 py-2 border-b border-[#3F3F46]">
             <p className="font-bold text-[10px] text-gray-400">
