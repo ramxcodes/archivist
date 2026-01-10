@@ -10,6 +10,8 @@ import {
   useYearEntries,
   useSaveDayEntry,
   useCreateReview,
+  useUpdateReview,
+  useDeleteReview,
   useCustomCategories,
   useDayEntry,
 } from "@/lib/api/calendar";
@@ -32,6 +34,8 @@ export default function Home() {
 
   const saveDayEntry = useSaveDayEntry();
   const createReview = useCreateReview();
+  const updateReview = useUpdateReview();
+  const deleteReview = useDeleteReview();
 
   const dayEntries: DayEntryMap = useMemo(() => {
     if (!yearData?.entries) return {};
@@ -108,10 +112,12 @@ export default function Home() {
     date: string;
     legend: Legend;
     reviews: Array<{
+      id?: string;
       category: ReviewCategory;
       customCategoryId?: string;
       content: string;
     }>;
+    reviewsToDelete?: string[];
   }) => {
     try {
       // First, save the day entry
@@ -120,17 +126,31 @@ export default function Home() {
         legend: data.legend,
       });
 
-      // Then, create all reviews
+      // Then, create or update reviews
       if (data.reviews.length > 0 && result.entry) {
         await Promise.all(
-          data.reviews.map((review) =>
-            createReview.mutateAsync({
-              dayEntryId: result.entry.id,
-              category: review.category,
-              customCategoryId: review.customCategoryId,
-              content: review.content,
-            })
-          )
+          data.reviews.map((review) => {
+            if (review.id) {
+              return updateReview.mutateAsync({
+                id: review.id,
+                content: review.content,
+              });
+            } else {
+              return createReview.mutateAsync({
+                dayEntryId: result.entry.id,
+                category: review.category,
+                customCategoryId: review.customCategoryId,
+                content: review.content,
+              });
+            }
+          })
+        );
+      }
+
+      // Handle deleted reviews
+      if (data.reviewsToDelete && data.reviewsToDelete.length > 0) {
+        await Promise.all(
+          data.reviewsToDelete.map((id) => deleteReview.mutateAsync(id))
         );
       }
 
@@ -141,6 +161,12 @@ export default function Home() {
       toast.error("Failed to save day entry. Please try again.");
     }
   };
+
+  const isSaving =
+    saveDayEntry.isPending ||
+    createReview.isPending ||
+    updateReview.isPending ||
+    deleteReview.isPending;
 
   if (isSessionLoading || (session && isLoadingYear)) {
     return (
@@ -252,6 +278,7 @@ export default function Home() {
             customCategories={customCategoriesData?.categories}
             onClose={() => setSelectedDay(null)}
             onSave={handleSaveDayEntry}
+            isSaving={isSaving}
           />
         )}
       </div>

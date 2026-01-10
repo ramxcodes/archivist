@@ -276,6 +276,7 @@ export function useCreateReview() {
     mutationFn: createReview,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["day-entry"] });
+      queryClient.invalidateQueries({ queryKey: ["year-entries"] });
     },
   });
 }
@@ -286,6 +287,7 @@ export function useUpdateReview() {
     mutationFn: updateReview,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["day-entry"] });
+      queryClient.invalidateQueries({ queryKey: ["year-entries"] });
     },
   });
 }
@@ -296,6 +298,7 @@ export function useDeleteReview() {
     mutationFn: deleteReview,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["day-entry"] });
+      queryClient.invalidateQueries({ queryKey: ["year-entries"] });
     },
   });
 }

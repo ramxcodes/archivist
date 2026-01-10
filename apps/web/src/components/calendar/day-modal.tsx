@@ -21,15 +21,18 @@ interface DayModalProps {
   entry?: DayEntry;
   reviews?: Review[];
   customCategories?: CustomCategory[];
+  isSaving?: boolean;
   onClose: () => void;
   onSave: (data: {
     date: string;
     legend: Legend;
     reviews: Array<{
+      id?: string;
       category: ReviewCategory;
       customCategoryId?: string;
       content: string;
     }>;
+    reviewsToDelete?: string[];
   }) => void;
 }
 
@@ -38,6 +41,7 @@ export const DayModal: React.FC<DayModalProps> = ({
   entry,
   reviews = [],
   customCategories = [],
+  isSaving = false,
   onClose,
   onSave,
 }) => {
@@ -46,6 +50,7 @@ export const DayModal: React.FC<DayModalProps> = ({
   const [reviewContents, setReviewContents] = useState<Record<string, string>>(
     {}
   );
+  const [reviewIds, setReviewIds] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (!day) return;
@@ -62,14 +67,17 @@ export const DayModal: React.FC<DayModalProps> = ({
 
     // Load existing reviews
     const contents: Record<string, string> = {};
+    const ids: Record<string, string> = {};
     reviews.forEach((review) => {
       const key =
         review.category === ReviewCategory.CUSTOM && review.customCategoryId
           ? `custom-${review.customCategoryId}`
           : review.category.toLowerCase();
       contents[key] = review.content;
+      ids[key] = review.id;
     });
     setReviewContents(contents);
+    setReviewIds(ids);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [day?.dateKey, entry?.id]);
 
@@ -111,6 +119,7 @@ export const DayModal: React.FC<DayModalProps> = ({
 
     // Build reviews array
     const reviewsToSave: Array<{
+      id?: string;
       category: ReviewCategory;
       customCategoryId?: string;
       content: string;
@@ -121,6 +130,7 @@ export const DayModal: React.FC<DayModalProps> = ({
       const content = reviewContents[cat.value.toLowerCase()]?.trim();
       if (content) {
         reviewsToSave.push({
+          id: reviewIds[cat.value.toLowerCase()],
           category: cat.value,
           content,
         });
@@ -132,6 +142,7 @@ export const DayModal: React.FC<DayModalProps> = ({
       const content = reviewContents[`custom-${cat.id}`]?.trim();
       if (content) {
         reviewsToSave.push({
+          id: reviewIds[`custom-${cat.id}`],
           category: ReviewCategory.CUSTOM,
           customCategoryId: cat.id,
           content,
@@ -139,10 +150,32 @@ export const DayModal: React.FC<DayModalProps> = ({
       }
     });
 
+    // Identify deleted reviews (have ID but empty/missing content)
+    const reviewsToDelete: string[] = [];
+
+    // Check default categories for deletion
+    DEFAULT_CATEGORIES.forEach((cat) => {
+      const id = reviewIds[cat.value.toLowerCase()];
+      const content = reviewContents[cat.value.toLowerCase()]?.trim();
+      if (id && !content) {
+        reviewsToDelete.push(id);
+      }
+    });
+
+    // Check custom categories for deletion
+    customCategories.forEach((cat) => {
+      const id = reviewIds[`custom-${cat.id}`];
+      const content = reviewContents[`custom-${cat.id}`]?.trim();
+      if (id && !content) {
+        reviewsToDelete.push(id);
+      }
+    });
+
     onSave({
       date: day.dateKey,
       legend: selectedLegend,
       reviews: reviewsToSave,
+      reviewsToDelete,
     });
   };
 
@@ -197,11 +230,10 @@ export const DayModal: React.FC<DayModalProps> = ({
                     onClick={() => setSelectedLegend(type)}
                     disabled={isFuture}
                     className={`
-                      w-full p-3 sm:p-4 rounded-xl flex items-center gap-3 sm:gap-4 transition-all
-                      ${
-                        isSelected
-                          ? "ring-2 ring-[#22D3EE] shadow-lg scale-[1.02]"
-                          : "hover:scale-[1.01] opacity-70 hover:opacity-100"
+                      w-full p-4 rounded-xl flex items-center gap-4 transition-all
+                      ${isSelected
+                        ? "ring-2 ring-[#22D3EE] shadow-lg scale-[1.02]"
+                        : "hover:scale-[1.01] opacity-70 hover:opacity-100"
                       }
                       ${isFuture ? "cursor-not-allowed" : "cursor-pointer"}
                       bg-[#0F0F12] border border-[#2A2B2F]
@@ -326,10 +358,16 @@ export const DayModal: React.FC<DayModalProps> = ({
             <div className="space-y-2 sm:space-y-3">
               <Button
                 onClick={handleSave}
-                disabled={isFuture}
-                className="w-full bg-[#22D3EE] hover:bg-[#06B6D4] text-gray-900 font-bold py-3 sm:py-4 rounded-xl shadow-lg transition-all active:scale-[0.98] text-sm sm:text-base"
+                disabled={isFuture || isSaving}
+                className="w-full bg-[#22D3EE] hover:bg-[#06B6D4] text-gray-900 font-bold py-4 rounded-xl shadow-lg transition-all active:scale-[0.98]"
               >
-                Save Entry
+                {isSaving
+                  ? entry
+                    ? "Updating..."
+                    : "Saving..."
+                  : entry
+                    ? "Update Entry"
+                    : "Save Entry"}
               </Button>
               <div className="flex gap-2 sm:gap-3">
                 <Button
