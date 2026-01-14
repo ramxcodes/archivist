@@ -30,9 +30,8 @@ type ProfileSettingsResponse = {
 };
 
 // API Functions
-
-const getYearEntries = async (): Promise<YearEntriesResponse> => {
-  const response = await fetch(`${API_URL}/api/days/2026`, {
+const getYearEntries = async (year: number): Promise<YearEntriesResponse> => {
+  const response = await fetch(`${API_URL}/api/days?year=${year}`, {
     credentials: "include",
   });
   if (!response.ok) {
@@ -234,11 +233,10 @@ const getPublicProfile = async (userIdOrSlug: string): Promise<any> => {
 };
 
 // React Query Hooks
-
-export function useYearEntries() {
-  return useQuery({
-    queryKey: ["year-entries"],
-    queryFn: getYearEntries,
+export function useYearEntries(year: number) {
+  return useQuery({ 
+    queryKey: ["year-entries", year], 
+    queryFn: () => getYearEntries(year),
   });
 }
 

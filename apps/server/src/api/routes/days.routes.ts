@@ -43,7 +43,7 @@ const validateUpdateDayEntry = (req: any, res: any, next: any) => {
 router.use(authenticate);
 
 // Routes
-router.get("/2026", getYearEntries);
+router.get("/", getYearEntries);
 router.get("/:date", getDayEntry);
 router.post("/", validateCreateDayEntry, createOrUpdateDayEntry);
 router.put("/:date", validateUpdateDayEntry, updateDayEntry);

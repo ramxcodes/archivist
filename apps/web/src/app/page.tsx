@@ -19,14 +19,14 @@ import { authClient } from "@/lib/auth-client";
 import SignInDialog from "@/components/auth/sign-in-dialog";
 
 export default function Home() {
-  const [year] = useState(2026);
+  const [year] = useState(new Date().getFullYear());
   const [selectedDay, setSelectedDay] = useState<DayInfo | null>(null);
   const [signInOpen, setSignInOpen] = useState(false);
 
   const { data: session, isPending: isSessionLoading } =
     authClient.useSession();
 
-  const { data: yearData, isLoading: isLoadingYear } = useYearEntries();
+  const { data: yearData, isLoading: isLoadingYear } = useYearEntries(year);
   const { data: customCategoriesData } = useCustomCategories();
   const { data: dayData } = useDayEntry(selectedDay?.dateKey || null);
 

@@ -14,6 +14,8 @@ export const getYearEntries = async (
   try {
     const userId = req.user?.id;
 
+    const year = req.query.year ? Number(req.query.year) : new Date().getFullYear();
+
     if (!userId) {
       res.status(401).json({
         message: "Authentication required",
@@ -27,8 +29,8 @@ export const getYearEntries = async (
       .where(
         and(
           eq(dayEntry.userId, userId),
-          gte(dayEntry.date, "2026-01-01"),
-          lte(dayEntry.date, "2026-12-31")
+          gte(dayEntry.date, `${year}-01-01`),
+          lte(dayEntry.date, `${year}-12-31`)
         )
       )
       .orderBy(dayEntry.date);
