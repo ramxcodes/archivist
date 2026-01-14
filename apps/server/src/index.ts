@@ -8,6 +8,7 @@ import reviewsRoutes from "./api/routes/reviews.routes";
 import categoriesRoutes from "./api/routes/categories.routes";
 import profileRoutes from "./api/routes/profile.routes";
 
+const port = process.env.PORT || 3009;
 const app = express();
 
 app.use(
@@ -34,8 +35,9 @@ app.get("/api/health", (_req, res) => {
     message: "OK! API is running",
   });
 });
-app.listen(3009, () => {
-  console.log("Server is running on http://localhost:3009");
+
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
   console.log("Environment variables:", {
     DATABASE_URL: env.DATABASE_URL
       ? env.DATABASE_URL.substring(0, 3) + "..."
