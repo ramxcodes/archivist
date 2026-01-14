@@ -10,14 +10,15 @@
     "start": "bun run dist/index.mjs"
   },
   "dependencies": {
-    "express": "^5.1.0",
-    "cors": "^2.8.5",
-    "better-auth": "catalog:",
-    "dotenv": "catalog:",
-    "zod": "catalog:",
-    "@archivist/env": "workspace:*",
     "@archivist/auth": "workspace:*",
-    "@archivist/db": "workspace:*"
+    "@archivist/db": "workspace:*",
+    "@archivist/env": "workspace:*",
+    "better-auth": "catalog:",
+    "cors": "^2.8.5",
+    "dotenv": "catalog:",
+    "express": "^5.1.0",
+    "ioredis": "^5.9.1",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@types/express": "^5.0.1",
