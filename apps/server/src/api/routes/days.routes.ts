@@ -11,33 +11,9 @@ import {
   createDayEntrySchema,
   updateDayEntrySchema,
 } from "../validators/days.validator";
+import { requestValidator } from "../validators";
 
 const router: express.Router = Router();
-
-// Validation middleware
-const validateCreateDayEntry = (req: any, res: any, next: any) => {
-  try {
-    createDayEntrySchema.parse(req.body);
-    next();
-  } catch (error: any) {
-    res.status(400).json({
-      message: "Validation error",
-      errors: error.errors,
-    });
-  }
-};
-
-const validateUpdateDayEntry = (req: any, res: any, next: any) => {
-  try {
-    updateDayEntrySchema.parse(req.body);
-    next();
-  } catch (error: any) {
-    res.status(400).json({
-      message: "Validation error",
-      errors: error.errors,
-    });
-  }
-};
 
 // All routes require authentication
 router.use(authenticate);
@@ -45,8 +21,12 @@ router.use(authenticate);
 // Routes
 router.get("/2026", getYearEntries);
 router.get("/:date", getDayEntry);
-router.post("/", validateCreateDayEntry, createOrUpdateDayEntry);
-router.put("/:date", validateUpdateDayEntry, updateDayEntry);
+router.post(
+  "/",
+  requestValidator(createDayEntrySchema),
+  createOrUpdateDayEntry
+);
+router.put("/:date", requestValidator(updateDayEntrySchema), updateDayEntry);
 router.delete("/:date", deleteDayEntry);
 
 export default router;
